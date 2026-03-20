@@ -17,6 +17,9 @@
 #include "i2c1.h"
 #include "lcd.h"
 
+#define DHI_READ_TICK     100
+#define LCD_UPDATE_TICK   10
+
 int main(void)
 {
   // Initialize all the peripherals
@@ -27,6 +30,10 @@ int main(void)
   I2C1_Init();
   LCD_Init();
   DHT11_Init();
+
+  // Loop counters
+  uint8_t dht_count = 0;
+  uint8_t lcd_count = 0;
 
   LCD_Clear();
   LCD_SendString("STM32 PROJECT");
@@ -47,7 +54,7 @@ int main(void)
   {
     USART2_SendString("Failed to initialize... Check Debug logs\n");
   }
-  USART2_SendString("ESP8266 initialized OK\n");
+  USART2_SendString("ESP8266 Initialized\n");
 
   // Connect to WiFi
   if(ESP_ConnectWiFi("mynoobu", "Sarah159!", ip_buf, sizeof(ip_buf)) != ESP8266_OK)
@@ -60,6 +67,22 @@ int main(void)
 
   while(1)
   {
+    // Run tasks at different rates
 
+    // DHT11 every 1 seconds
+    if(dht_count++ >= DHI_READ_TICK)
+    {
+      Task_DHT11_Read();
+      dht_count = 0;
+    }
+
+    // LCD update every 100ms
+    if(lcd_count++ >= LCD_UPDATE_TICK)
+    {
+      Task_LCD_Update();
+      lcd_count = 0;
+    }
+
+    TIMER3_WaitPeriod();
   }
 }

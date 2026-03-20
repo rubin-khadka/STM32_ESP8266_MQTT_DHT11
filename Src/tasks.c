@@ -8,12 +8,18 @@
 #include "stm32f103xb.h"
 #include "dht11.h"
 #include "dwt.h"
+#include "lcd.h"
 
 #define MAX_RETRIES 5
 
 // Global variables to store DHT11 data
 volatile float dht11_humidity = 0.0f;
 volatile float dht11_temperature = 0.0f;
+
+static uint8_t dht11_humidity1 = 0;
+static uint8_t dht11_humidity2 = 0;
+static uint8_t dht11_temperature1 = 0;
+static uint8_t dht11_temperature2 = 0;
 
 void Task_DHT11_Read(void)
 {
@@ -40,6 +46,11 @@ void Task_DHT11_Read(void)
 
       if(calc == checksum)
       {
+        dht11_humidity1 = hum1;
+        dht11_humidity2 = hum2;
+        dht11_temperature1 = temp1;
+        dht11_temperature2 = temp2;
+
         // Humidity: combine integer and decimal parts
         dht11_humidity = (float) hum1 + (float) hum2 / 10.0f;
 
@@ -52,9 +63,14 @@ void Task_DHT11_Read(void)
         break;
       }
     }
-    DWT_Delay_ms(1);
   }
 
   // Re-enable interrupts
   __set_PRIMASK(primask);
 }
+
+void Task_LCD_Update(void)
+{
+  LCD_DisplayReading_Temp(dht11_temperature1, dht11_temperature2, dht11_humidity1, dht11_humidity2);
+}
+
