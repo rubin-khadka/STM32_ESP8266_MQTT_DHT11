@@ -20,6 +20,10 @@ I had this module available, so I used it for demonstration but the code works w
 
 https://github.com/user-attachments/assets/a0a5db33-6efd-470d-9a2d-b6af465087df
 
+### Hterm and MQTT Explorer Output
+
+https://github.com/user-attachments/assets/941c0d22-def7-4e97-9dfe-1fc78a94a81a
+
 ## Project Schematic
 
 <img width="1457" height="602" alt="schematic_diagram" src="https://github.com/user-attachments/assets/11b0fce3-c832-4395-ac85-7d13268fc907" />
